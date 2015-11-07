@@ -15,6 +15,9 @@ os.environ['SDL_VIDEO_CENTERED'] = '1'
 from pygame.locals import *
 
 negyzet = 70
+xplusz = 50
+yplusz1 = 370
+yplusz2 = 30
 
 #keret = pygame.image.load('keret.png')
 
@@ -42,7 +45,7 @@ for j in range(1,3):
 
 kivalaszt = pygame.image.load("kivalaszt.png")
 cel = pygame.image.load("cel.png")
-# kivalaszt = cel
+robot = pygame.image.load("robot.png")
 
 t = [[0 for i in range(8)] for j in range(8)]
 
@@ -76,11 +79,9 @@ t[5][7] = 14
 for i in range(8):
     t[i][6] = 16
 
-xplusz = 50
-yplusz = 100
 
 sz = negyzet * 8 + 2 * xplusz
-m = negyzet * 8 + 2 * yplusz
+m = negyzet * 8 + yplusz1 + yplusz2
 
 screen = pygame.display.set_mode((sz, m))
 
@@ -122,11 +123,15 @@ def figurat_rajzol(oszlop, sor, melyiket):
         merety = f.get_rect().h
         javitasx = (negyzet-meretx)/2
         javitasy = (negyzet-merety)/2
-        screen.blit(f,(oszlop*negyzet+javitasx+xplusz,(7-sor)*negyzet+javitasy+yplusz))
+        screen.blit(f,(oszlop*negyzet+javitasx+xplusz,(7-sor)*negyzet+javitasy+yplusz1))
 
 def kirajzol():
     tablaszin = (0,128,0,255)
     pygame.draw.rect(screen, tablaszin, (0,0,sz,m), 0)
+
+    # Robotkirajzolás:
+    robotx = robot.get_rect().w
+    screen.blit(robot,((sz-robotx)/2,0))
 
     for i in range(8):
         for j in range(8):
@@ -134,7 +139,7 @@ def kirajzol():
                 mezoszin = (128,128,128,255)
             else:
                 mezoszin = (192,192,192,255)
-            pygame.draw.rect(screen, mezoszin, (i*negyzet+xplusz,(7-j)*negyzet+yplusz,negyzet,negyzet), 0)
+            pygame.draw.rect(screen, mezoszin, (i*negyzet+xplusz,(7-j)*negyzet+yplusz1,negyzet,negyzet), 0)
             figurat_rajzol(i, j, t[i][j])
 
 kirajzol()
@@ -268,8 +273,15 @@ def ide_lephet(oszlop, sor):
             valasz.append(szamma(oszlop-1,sor-2))
     return valasz
 
+def sotet_nyer():
+    pygame.mixer.music.fadeout(0)
+    # http://www.clanb2k.com/cstrike12/sound/zombie_plague/survivor1.wav
+    pygame.mixer.music.load("sotet_nyer.wav")
+    pygame.mixer.music.play(0)
+
 kijelolve = False
 lepett = False
+lepes = 0
 
 while fut:
 
@@ -288,7 +300,7 @@ while fut:
                 print "Bal egérgomb lenyomva."
                 egerhol = pygame.mouse.get_pos()
                 egerx = (egerhol[0] - xplusz) / negyzet
-                egery = 7 - ((egerhol[1] - yplusz) / negyzet)
+                egery = 7 - ((egerhol[1] - yplusz1) / negyzet)
                 print "Ez a", egerx, egery, "négyzet."
                 if (egerx >= 0) and (egerx <= 7) and (egery >=0) and (egery <= 7):
                     if kijelolve:
@@ -306,6 +318,9 @@ while fut:
                                 kijelolve = False
                                 lepett = True
                                 kirajzol()
+                                lepes += 1
+                                if lepes % 4 == 0:
+                                    sotet_nyer()
                     if not lepett:
                         figura = t[egerx][egery]
                         if (figura >= 1) and (figura <= 6):
