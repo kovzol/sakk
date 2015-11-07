@@ -163,29 +163,54 @@ def vilagos(oszlop, sor):
     ez = t[oszlop][sor]
     return ez >= 1 and ez <= 6
 
+def ellenkezo(oszlop, sor, p):
+    if p == 0: # a világos ellenkezőjét keressük
+        return sotet(oszlop, sor)
+    return vilagos(oszlop, sor)
+
+def azonos(oszlop, sor, p):
+    if p == 0: # a világossal azonosat keressük
+        return vilagos(oszlop, sor)
+    return sotet(oszlop, sor)
+
 def ide_lephet(oszlop, sor):
     valasz = []
     f = t[oszlop][sor]
-    if f == 6: # gyalog
+    if vilagos(oszlop, sor):
+        plusz = 0
+    else:
+        plusz = 10
+
+    if f == 6: # világos gyalog
         if sor < 7 and ures(oszlop, sor + 1):
             valasz.append([oszlop,sor+1])
         if sor == 1 and ures(oszlop, sor + 1) and ures(oszlop, sor + 2):
             valasz.append([oszlop,sor+2])
         # jobbra ütés:
-        if sor < 7 and oszlop < 7 and sotet(oszlop+1,sor+1):
-            print "Jobbra ütés:", oszlop, sor
+        if sor < 7 and oszlop < 7 and ellenkezo(oszlop+1,sor+1,plusz):
             valasz.append([oszlop+1,sor+1])
         # balra ütés:
-        if sor < 7 and oszlop > 0 and sotet(oszlop-1,sor+1):
+        if sor < 7 and oszlop > 0 and ellenkezo(oszlop-1,sor+1,plusz):
             valasz.append([oszlop-1,sor+1])
-    if f == 2 or f == 3: # vezér vagy bástya
+    if f == 16: # sötét gyalog
+        if sor > 0 and ures(oszlop, sor - 1):
+            valasz.append([oszlop,sor-1])
+        if sor == 6 and ures(oszlop, sor - 1) and ures(oszlop, sor - 2):
+            valasz.append([oszlop,sor-2])
+        # jobbra ütés:
+        if sor > 0 and oszlop < 7 and ellenkezo(oszlop+1,sor-1,plusz):
+            valasz.append([oszlop+1,sor-1])
+        # balra ütés:
+        if sor > 0 and oszlop > 0 and ellenkezo(oszlop-1,sor-1,plusz):
+            valasz.append([oszlop-1,sor-1])
+    if f == 2 + plusz or f == 3 + plusz: # vezér vagy bástya
         # jobbra meddig tud lépni:
         ittx = oszlop
         itty = sor
         while ittx < 7 and ures(ittx+1, itty):
             valasz.append([ittx+1,itty])
             ittx += 1
-        if ittx < 7 and sotet(ittx+1, itty):
+        if ittx < 7 and ellenkezo(ittx+1, itty,plusz):
             valasz.append([ittx+1,itty])
         # balra meddig tud lépni:
         ittx = oszlop
@@ -193,7 +218,7 @@ def ide_lephet(oszlop, sor):
         while ittx > 0 and ures(ittx-1, itty):
             valasz.append([ittx-1,itty])
             ittx -= 1
-        if ittx > 0 and sotet(ittx-1, itty):
+        if ittx > 0 and ellenkezo(ittx-1, itty,plusz):
             valasz.append([ittx-1,itty])
         # le meddig tud lépni:
         ittx = oszlop
@@ -201,7 +226,7 @@ def ide_lephet(oszlop, sor):
         while itty > 0 and ures(ittx, itty-1):
             valasz.append([ittx,itty-1])
             itty -= 1
-        if itty > 0 and sotet(ittx, itty-1):
+        if itty > 0 and ellenkezo(ittx, itty-1,plusz):
             valasz.append([ittx,itty-1])
         # fel meddig tud lépni:
         ittx = oszlop
@@ -209,9 +234,9 @@ def ide_lephet(oszlop, sor):
         while itty < 7 and ures(ittx, itty+1):
             valasz.append([ittx,itty+1])
             itty += 1
-        if itty < 7 and sotet(ittx, itty+1):
+        if itty < 7 and ellenkezo(ittx, itty+1,plusz):
             valasz.append([ittx,itty+1])
-    if f == 2 or f == 4: # vezér vagy futó
+    if f == 2 + plusz or f == 4 + plusz: # vezér vagy futó
         # jobbra-fel meddig tud lépni:
         ittx = oszlop
         itty = sor
@@ -219,7 +244,7 @@ def ide_lephet(oszlop, sor):
             valasz.append([ittx+1,itty+1])
             ittx += 1
             itty += 1
-        if ittx < 7 and itty < 7 and sotet(ittx+1, itty+1):
+        if ittx < 7 and itty < 7 and ellenkezo(ittx+1, itty+1,plusz):
             valasz.append([ittx+1,itty+1])
         # balra-fel meddig tud lépni:
         ittx = oszlop
@@ -228,7 +253,7 @@ def ide_lephet(oszlop, sor):
             valasz.append([ittx-1,itty+1])
             ittx -= 1
             itty += 1
-        if ittx > 0 and itty < 7 and sotet(ittx-1, itty+1):
+        if ittx > 0 and itty < 7 and ellenkezo(ittx-1, itty+1,plusz):
             valasz.append([ittx-1,itty+1])
         # balra-le meddig tud lépni:
         ittx = oszlop
@@ -237,7 +262,7 @@ def ide_lephet(oszlop, sor):
             valasz.append([ittx-1,itty-1])
             ittx -= 1
             itty -= 1
-        if ittx > 0 and itty > 0 and sotet(ittx-1, itty-1):
+        if ittx > 0 and itty > 0 and ellenkezo(ittx-1, itty-1,plusz):
             valasz.append([ittx-1,itty-1])
         # jobbra-le meddig tud lépni:
         ittx = oszlop
@@ -246,41 +271,41 @@ def ide_lephet(oszlop, sor):
             valasz.append([ittx+1,itty-1])
             ittx += 1
             itty -= 1
-        if itty > 0 and ittx < 7 and sotet(ittx+1, itty-1):
+        if itty > 0 and ittx < 7 and ellenkezo(ittx+1, itty-1,plusz):
             valasz.append([ittx+1,itty-1])
-    if f == 5: # huszár
-        if sor < 7 and oszlop < 6 and not vilagos(oszlop + 2, sor + 1):
+    if f == 5 + plusz: # huszár
+        if sor < 7 and oszlop < 6 and not azonos(oszlop + 2, sor + 1,plusz):
             valasz.append([oszlop+2,sor+1])
-        if sor > 0 and oszlop < 6 and not vilagos(oszlop + 2, sor - 1):
+        if sor > 0 and oszlop < 6 and not azonos(oszlop + 2, sor - 1,plusz):
             valasz.append([oszlop+2,sor-1])
-        if sor < 6 and oszlop < 7 and not vilagos(oszlop + 1, sor + 2):
+        if sor < 6 and oszlop < 7 and not azonos(oszlop + 1, sor + 2,plusz):
             valasz.append([oszlop+1,sor+2])
-        if sor > 1 and oszlop < 7 and not vilagos(oszlop + 1, sor - 2):
+        if sor > 1 and oszlop < 7 and not azonos(oszlop + 1, sor - 2,plusz):
             valasz.append([oszlop+1,sor-2])
-        if sor < 7 and oszlop > 1 and not vilagos(oszlop - 2, sor + 1):
+        if sor < 7 and oszlop > 1 and not azonos(oszlop - 2, sor + 1,plusz):
             valasz.append([oszlop-2,sor+1])
-        if sor > 0 and oszlop > 1 and not vilagos(oszlop - 2, sor - 1):
+        if sor > 0 and oszlop > 1 and not azonos(oszlop - 2, sor - 1,plusz):
             valasz.append([oszlop-2,sor-1])
-        if sor < 6 and oszlop > 0 and not vilagos(oszlop - 1, sor + 2):
+        if sor < 6 and oszlop > 0 and not azonos(oszlop - 1, sor + 2,plusz):
             valasz.append([oszlop-1,sor+2])
-        if sor > 1 and oszlop > 0 and not vilagos(oszlop - 1, sor - 2):
+        if sor > 1 and oszlop > 0 and not azonos(oszlop - 1, sor - 2,plusz):
             valasz.append([oszlop-1,sor-2])
-    if f == 1: # király
-        if sor < 7 and oszlop < 7 and not vilagos(oszlop + 1, sor + 1):
+    if f == 1 + plusz: # király
+        if sor < 7 and oszlop < 7 and not azonos(oszlop + 1, sor + 1,plusz):
             valasz.append([oszlop+1,sor+1])
-        if sor > 0 and oszlop < 7 and not vilagos(oszlop + 1, sor - 1):
+        if sor > 0 and oszlop < 7 and not azonos(oszlop + 1, sor - 1,plusz):
             valasz.append([oszlop+1,sor-1])
-        if sor < 7 and oszlop > 0 and not vilagos(oszlop - 1, sor + 1):
+        if sor < 7 and oszlop > 0 and not azonos(oszlop - 1, sor + 1,plusz):
             valasz.append([oszlop-1,sor+1])
-        if sor > 0 and oszlop > 0 and not vilagos(oszlop - 1, sor - 1):
+        if sor > 0 and oszlop > 0 and not azonos(oszlop - 1, sor - 1,plusz):
             valasz.append([oszlop-1,sor-1])
-        if oszlop < 7 and not vilagos(oszlop + 1, sor):
+        if oszlop < 7 and not azonos(oszlop + 1, sor,plusz):
             valasz.append([oszlop+1,sor])
-        if sor < 7 and not vilagos(oszlop, sor + 1):
+        if sor < 7 and not azonos(oszlop, sor + 1,plusz):
             valasz.append([oszlop,sor+1])
-        if oszlop > 0 and not vilagos(oszlop - 1, sor):
+        if oszlop > 0 and not azonos(oszlop - 1, sor,plusz):
             valasz.append([oszlop-1,sor])
-        if sor > 0 and not vilagos(oszlop, sor - 1):
+        if sor > 0 and not azonos(oszlop, sor - 1,plusz):
             valasz.append([oszlop,sor-1])
     return valasz
 
