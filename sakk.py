@@ -114,13 +114,55 @@ def figurat_rajzol(oszlop, sor, melyiket):
         javitasy = (negyzet-merety)/2
         screen.blit(f,(oszlop*negyzet+javitasx+xplusz,(7-sor)*negyzet+javitasy+yplusz1))
 
+def tablaertek():
+    ertek = 0
+    for i in range(8):
+        for j in range(8):
+            f = t[i][j]
+            ertekek = {
+                1: -1000,
+                2: -9,
+                3: -5,
+                4: -3,
+                5: -2,
+                6: -1,
+                11: 1000,
+                12: 9,
+                13: 5,
+                14: 3,
+                15: 2,
+                16: 1
+                }
+            ertek += ertekek.get(f, 0)
+    return ertek
+
+def kedvszin():
+    e = tablaertek()
+    if e > 900:
+        return [255,255,255]
+    if e > 10:
+        return [192,192,192]
+    if e > 3:
+        return [0,192,0]
+    if e < -2:
+        return [0,64,0]
+    if e < -10:
+        return [64,64,64]
+    if e < -900:
+        return [16,16,16]
+    return [0,128,0]
+
+def robotkirajzolas(kedv):
+    robotx = robot.get_rect().w
+    roboty = robot.get_rect().h
+    pygame.draw.rect(screen, (kedv[0],kedv[1],kedv[2],255), (0,0,sz,roboty), 0)
+    screen.blit(robot,((sz-robotx)/2,0))
+
 def kirajzol():
     tablaszin = (0,128,0,255)
     pygame.draw.rect(screen, tablaszin, (0,0,sz,m), 0)
 
-    # Robotkirajzolás:
-    robotx = robot.get_rect().w
-    screen.blit(robot,((sz-robotx)/2,0))
+    robotkirajzolas(kedvszin())
 
     for i in range(8):
         for j in range(8):
@@ -161,28 +203,6 @@ def azonos(oszlop, sor, p):
     if p == 0: # a világossal azonosat keressük
         return vilagos(oszlop, sor)
     return sotet(oszlop, sor)
-
-def tablaertek():
-    ertek = 0
-    for i in range(8):
-        for j in range(8):
-            f = t[i][j]
-            ertekek = {
-                1: -1000,
-                2: -9,
-                3: -5,
-                4: -3,
-                5: -2,
-                6: -1,
-                11: 1000,
-                12: 9,
-                13: 5,
-                14: 3,
-                15: 2,
-                16: 1
-                }
-            ertek += ertekek.get(f, 0)
-    return ertek
 
 def ide_lephet(oszlop, sor):
     """Egy bizonyos helyről hová léphet valamelyik játékos. Esetleg sakkba is léphet."""
@@ -387,6 +407,17 @@ def sotet_nyer():
     pygame.mixer.music.play(0)
 
 def vilagos_nyer():
+
+    for i in range(1000):
+        # 0 -> 16, 128 -> 16, 0 -> 16
+        kedv = kedvszin()
+        honnanr = kedv[0]
+        honnang = kedv[1]
+        honnanb = kedv[2]
+        robotkirajzolas([honnanr - (honnanr - 16)*i/1000,honnang - (honnang-16)*i/1000,honnanb - (honnanb-16)*i/1000])
+        pygame.display.flip()
+
+    pygame.mixer.quit()
     film = pygame.movie.Movie('explosion.mpg')
     robotx = robot.get_rect().w
     film_screen = pygame.Surface((robotx,robot.get_rect().h))
