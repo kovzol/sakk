@@ -144,13 +144,25 @@ def kedvszin():
         return [192,192,192]
     if e > 3:
         return [0,192,0]
-    if e < -2:
+    if e > 2:
+        return [0,176,0]
+    if e > 1:
+        return [0,160,0]
+    if e > 0:
+        return [0,144,0]
+    if e > -1:
+        return [0,128,0]
+    if e > -2:
+        return [0,112,0]
+    if e > -2:
+        return [0,96,0]
+    if e > -4:
         return [0,64,0]
-    if e < -10:
-        return [64,64,64]
-    if e < -900:
-        return [16,16,16]
-    return [0,128,0]
+    if e > -10:
+        return [0,48,0]
+    if e > -900:
+        return [16,32,16]
+    return [16,16,16]
 
 def robotkirajzolas(kedv):
     robotx = robot.get_rect().w
