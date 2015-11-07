@@ -167,6 +167,28 @@ def azonos(oszlop, sor, p):
         return vilagos(oszlop, sor)
     return sotet(oszlop, sor)
 
+def tablaertek():
+    ertek = 0
+    for i in range(8):
+        for j in range(8):
+            f = t[i][j]
+            ertekek = {
+                1: -1000,
+                2: -9,
+                3: -5,
+                4: -3,
+                5: -2,
+                6: -1,
+                11: 1000,
+                12: 9,
+                13: 5,
+                14: 3,
+                15: 2,
+                16: 1
+                }
+            ertek += ertekek.get(f, 0)
+    return ertek
+
 def ide_lephet(oszlop, sor):
     valasz = []
     f = t[oszlop][sor]
@@ -391,9 +413,14 @@ while fut:
         if t[egerx][egery] == 16 and egery == 0:
             t[egerx][egery] = 12
         kirajzol()
+
         lepes += 1
 
+        print "A tábla értéke:", tablaertek()
+
+
     lepett = False
+
 
     ora.tick(30)
 
