@@ -78,8 +78,6 @@ m = negyzet * 8 + yplusz1 + yplusz2
 
 screen = pygame.display.set_mode((sz, m))
 
-#hatter = pygame.transform.scale(keret, (sz, m))
-
 def figurat_rajzol(oszlop, sor, melyiket):
     if melyiket == 1:
         f = fig[0][0]
@@ -388,6 +386,31 @@ def sotet_nyer():
     pygame.mixer.music.load("sotet_nyer.wav")
     pygame.mixer.music.play(0)
 
+def vilagos_nyer():
+    film = pygame.movie.Movie('explosion.mpg')
+    robotx = robot.get_rect().w
+    film_screen = pygame.Surface((robotx,robot.get_rect().h))
+
+    film.set_display(film_screen)
+    film.play()
+
+    a = 0
+    FPS = 60
+
+    lejatszas = True
+
+    while lejatszas and (a < 400):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                film.stop()
+                lejatszas = False
+        screen.blit(film_screen,((sz-robotx)/2,0))
+
+        pygame.display.update()
+        ora.tick(FPS)
+        a += 1
+    pygame.quit()
+
 def meglepi(honnanx, honnany, hovax, hovay):
     """Meglépi a táblán a honnan mezőről a hova mezőre a lépést."""
     t[hovax][hovay] = t[honnanx][honnany]
@@ -417,7 +440,7 @@ def okosan_lep(innen_lehetseges, ide_lehetseges):
         if ertek_ez > legjobb_tablaertek:
             legjobb_lepes = l
             legjobb_tablaertek = ertek_ez
-        if ertek_ez == legjobb_tablaertek and random.randint(1,6) <= 3:
+        if ertek_ez == legjobb_tablaertek and random.randint(1,6) <= 1:
             legjobb_lepes = l
     t = copy.deepcopy(tabla_mentes)
     return legjobb_lepes
@@ -492,6 +515,8 @@ while fut:
 
         szamuk = len(ide_lehetseges)
         print "Sötét lehetséges lépései:", szamuk, "db"
+        if szamuk == 0:
+            vilagos_nyer()
 
         # ezt_lepi = butan_lep(innen_lehetseges, ide_lehetseges) 
         ezt_lepi = okosan_lep(innen_lehetseges, ide_lehetseges) 
@@ -515,7 +540,6 @@ while fut:
         lepes += 1
 
         print "A tábla értéke:", tablaertek()
-
 
     lepett = False
 
