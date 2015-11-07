@@ -153,12 +153,6 @@ ora.tick()
 
 pygame.init()
 
-def szamma(oszlop, sor):
-    return oszlop * 8 + sor
-
-def szambol(szam):
-    return [int(szam / 8), szam % 8]
-
 def ures(oszlop, sor):
     return t[oszlop][sor] == 0
 
@@ -174,103 +168,103 @@ def ide_lephet(oszlop, sor):
     f = t[oszlop][sor]
     if f == 6: # gyalog
         if sor < 7 and ures(oszlop, sor + 1):
-            valasz.append(szamma(oszlop,sor+1))
+            valasz.append([oszlop,sor+1])
         if sor == 1 and ures(oszlop, sor + 1) and ures(oszlop, sor + 2):
-            valasz.append(szamma(oszlop,sor+2))
+            valasz.append([oszlop,sor+2])
         # jobbra ütés:
         if sor < 7 and oszlop < 7 and sotet(oszlop+1,sor+1):
             print "Jobbra ütés:", oszlop, sor
-            valasz.append(szamma(oszlop+1,sor+1))
+            valasz.append([oszlop+1,sor+1])
         # balra ütés:
         if sor < 7 and oszlop > 0 and sotet(oszlop-1,sor+1):
-            valasz.append(szamma(oszlop-1,sor+1))
+            valasz.append([oszlop-1,sor+1])
     if f == 2 or f == 3: # vezér vagy bástya
         # jobbra meddig tud lépni:
         ittx = oszlop
         itty = sor
         while ittx < 7 and ures(ittx+1, itty):
-            valasz.append(szamma(ittx+1,itty))
+            valasz.append([ittx+1,itty])
             ittx += 1
         if ittx < 7 and sotet(ittx+1, itty):
-            valasz.append(szamma(ittx+1,itty))
+            valasz.append([ittx+1,itty])
         # balra meddig tud lépni:
         ittx = oszlop
         itty = sor
         while ittx > 0 and ures(ittx-1, itty):
-            valasz.append(szamma(ittx-1,itty))
+            valasz.append([ittx-1,itty])
             ittx -= 1
         if ittx > 0 and sotet(ittx-1, itty):
-            valasz.append(szamma(ittx-1,itty))
+            valasz.append([ittx-1,itty])
         # le meddig tud lépni:
         ittx = oszlop
         itty = sor
         while itty > 0 and ures(ittx, itty-1):
-            valasz.append(szamma(ittx,itty-1))
+            valasz.append([ittx,itty-1])
             itty -= 1
         if itty > 0 and sotet(ittx, itty-1):
-            valasz.append(szamma(ittx,itty-1))
+            valasz.append([ittx,itty-1])
         # fel meddig tud lépni:
         ittx = oszlop
         itty = sor
         while itty < 7 and ures(ittx, itty+1):
-            valasz.append(szamma(ittx,itty+1))
+            valasz.append([ittx,itty+1])
             itty += 1
         if itty < 7 and sotet(ittx, itty+1):
-            valasz.append(szamma(ittx,itty+1))
+            valasz.append([ittx,itty+1])
     if f == 2 or f == 4: # vezér vagy futó
         # jobbra-fel meddig tud lépni:
         ittx = oszlop
         itty = sor
         while ittx < 7 and itty < 7 and ures(ittx+1, itty+1):
-            valasz.append(szamma(ittx+1,itty+1))
+            valasz.append([ittx+1,itty+1])
             ittx += 1
             itty += 1
         if ittx < 7 and itty < 7 and sotet(ittx+1, itty+1):
-            valasz.append(szamma(ittx+1,itty+1))
+            valasz.append([ittx+1,itty+1])
         # balra-fel meddig tud lépni:
         ittx = oszlop
         itty = sor
         while ittx > 0 and itty < 7 and ures(ittx-1, itty+1):
-            valasz.append(szamma(ittx-1,itty+1))
+            valasz.append([ittx-1,itty+1])
             ittx -= 1
             itty += 1
         if ittx > 0 and itty < 7 and sotet(ittx-1, itty+1):
-            valasz.append(szamma(ittx-1,itty+1))
+            valasz.append([ittx-1,itty+1])
         # balra-le meddig tud lépni:
         ittx = oszlop
         itty = sor
         while ittx > 0 and itty > 0 and ures(ittx-1, itty-1):
-            valasz.append(szamma(ittx-1,itty-1))
+            valasz.append([ittx-1,itty-1])
             ittx -= 1
             itty -= 1
         if ittx > 0 and itty > 0 and sotet(ittx-1, itty-1):
-            valasz.append(szamma(ittx-1,itty-1))
+            valasz.append([ittx-1,itty-1])
         # jobbra-le meddig tud lépni:
         ittx = oszlop
         itty = sor
         while itty > 0 and ittx < 7 and ures(ittx+1, itty-1):
-            valasz.append(szamma(ittx+1,itty-1))
+            valasz.append([ittx+1,itty-1])
             ittx += 1
             itty -= 1
         if itty > 0 and ittx < 7 and sotet(ittx+1, itty-1):
-            valasz.append(szamma(ittx+1,itty-1))
+            valasz.append([ittx+1,itty-1])
     if f == 5: # huszár
         if sor < 7 and oszlop < 6 and not vilagos(oszlop + 2, sor + 1):
-            valasz.append(szamma(oszlop+2,sor+1))
+            valasz.append([oszlop+2,sor+1])
         if sor > 0 and oszlop < 6 and not vilagos(oszlop + 2, sor - 1):
-            valasz.append(szamma(oszlop+2,sor-1))
+            valasz.append([oszlop+2,sor-1])
         if sor < 6 and oszlop < 7 and not vilagos(oszlop + 1, sor + 2):
-            valasz.append(szamma(oszlop+1,sor+2))
+            valasz.append([oszlop+1,sor+2])
         if sor > 1 and oszlop < 7 and not vilagos(oszlop + 1, sor - 2):
-            valasz.append(szamma(oszlop+1,sor-2))
+            valasz.append([oszlop+1,sor-2])
         if sor < 7 and oszlop > 1 and not vilagos(oszlop - 2, sor + 1):
-            valasz.append(szamma(oszlop-2,sor+1))
+            valasz.append([oszlop-2,sor+1])
         if sor > 0 and oszlop > 1 and not vilagos(oszlop - 2, sor - 1):
-            valasz.append(szamma(oszlop-2,sor-1))
+            valasz.append([oszlop-2,sor-1])
         if sor < 6 and oszlop > 0 and not vilagos(oszlop - 1, sor + 2):
-            valasz.append(szamma(oszlop-1,sor+2))
+            valasz.append([oszlop-1,sor+2])
         if sor > 1 and oszlop > 0 and not vilagos(oszlop - 1, sor - 2):
-            valasz.append(szamma(oszlop-1,sor-2))
+            valasz.append([oszlop-1,sor-2])
     return valasz
 
 def sotet_nyer():
@@ -305,9 +299,8 @@ while fut:
                 if (egerx >= 0) and (egerx <= 7) and (egery >=0) and (egery <= 7):
                     if kijelolve:
                         for lista in lepesek:
-                            ide = szambol(lista)
-                            idex = ide[0]
-                            idey = ide[1]
+                            idex = lista[0]
+                            idey = lista[1]
                             if (egerx == idex) and (egery == idey):
                                 # Itt lépünk:
                                 t[egerx][egery] = t[innenx][inneny]
@@ -328,10 +321,9 @@ while fut:
                             figurat_rajzol(egerx, egery, 20)
                             lepesek = ide_lephet(egerx, egery)
                             for lista in lepesek:
-                                ide = szambol(lista)
-                                print "Ide léphet:", ide
-                                idex = ide[0]
-                                idey = ide[1]
+                                print "Ide léphet:", lista
+                                idex = lista[0]
+                                idey = lista[1]
                                 figurat_rajzol(idex, idey, 21)
                                 kijelolve = True
                             innenx = egerx
