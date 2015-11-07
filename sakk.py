@@ -331,6 +331,26 @@ def sotet_nyer():
     pygame.mixer.music.load("sotet_nyer.wav")
     pygame.mixer.music.play(0)
 
+def meglepi(honnanx, honnany, hovax, hovay):
+    """Meglépi a táblán a honnan mezőről a hova mezőre a lépést."""
+    t[hovax][hovay] = t[honnanx][honnany]
+    t[honnanx][honnany] = 0
+    # Ha a világos gyalog belépett az utolsó sorba, akkor vezér lesz:
+    if t[hovax][hovay] == 6 and hovay == 7:
+        t[hovax][7] = 2
+    # Ha a sötét gyalog belépett az utolsó sorba, akkor vezér lesz:
+    if t[hovax][hovay] == 16 and hovay == 0:
+        t[hovax][0] = 12
+
+def okosan_lep(innen_lehetseges, ide_lehetseges):
+    tabla_mentes = t # megjegyezzük, hogy mi az állás
+    return 0
+
+def butan_lep(innen_lehetseges, ide_lehetseges):
+    szamuk = len(ide_lehetseges)
+    veletlen = random.randint(0,szamuk-1)
+    return veletlen
+
 kijelolve = False
 lepett = False
 lepes = 0
@@ -359,11 +379,7 @@ while fut:
                             idey = lista[1]
                             if (egerx == idex) and (egery == idey):
                                 # Itt lépünk:
-                                t[egerx][egery] = t[innenx][inneny]
-                                t[innenx][inneny] = 0
-                                # Ha a gyalog belépett az utolsó sorba, akkor vezér lesz:
-                                if t[egerx][egery] == 6 and egery == 7:
-                                    t[egerx][egery] = 2
+                                meglepi(innenx,inneny,egerx,egery)
                                 kijelolve = False
                                 lepett = True
                                 kirajzol()
@@ -399,7 +415,9 @@ while fut:
 
         szamuk = len(ide_lehetseges)
         print "Sötét lehetséges lépései:", szamuk, "db"
-        ezt_lepi = random.randint(0,szamuk-1)
+
+        ezt_lepi = butan_lep(innen_lehetseges, ide_lehetseges) 
+
         gep_ide = ide_lehetseges[ezt_lepi]
         gep_innen = innen_lehetseges[ezt_lepi]
         # Itt lép:
@@ -407,11 +425,7 @@ while fut:
         inneny = gep_innen[1]
         egerx = gep_ide[0]
         egery = gep_ide[1]
-        t[egerx][egery] = t[innenx][inneny]
-        t[innenx][inneny] = 0
-        # Ha a gyalog belépett az utolsó sorba, akkor vezér lesz:
-        if t[egerx][egery] == 16 and egery == 0:
-            t[egerx][egery] = 12
+        meglepi(innenx,inneny,egerx,egery)
         kirajzol()
 
         lepes += 1
