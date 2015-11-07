@@ -10,6 +10,7 @@ import random
 import time
 import os
 import copy
+import sys
 
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 
@@ -19,8 +20,6 @@ negyzet = 70
 xplusz = 50
 yplusz1 = 370
 yplusz2 = 30
-
-#keret = pygame.image.load('keret.png')
 
 fig = [[None for i in range(3)] for j in range(6)]
 
@@ -71,7 +70,6 @@ t[5][7] = 14
 
 for i in range(8):
     t[i][6] = 16
-
 
 sz = negyzet * 8 + 2 * xplusz
 m = negyzet * 8 + yplusz1 + yplusz2
@@ -341,6 +339,8 @@ def lepesinfo(x1,y1,x2,y2):
     x = str("")
     if t[x2][y2] > 0:
         x = "x"
+        if f == "": # gyalognál az induló oszlop
+            f = str(chr(x1+ord('a')))
     return f + x + str(chr(x2+ord('a'))) + str(y2+1)
 
 def ide_lephet_de_nincs_sakkban(oszlop,sor):
@@ -410,6 +410,7 @@ def vilagos_nyer():
         ora.tick(FPS)
         a += 1
     pygame.quit()
+    sys.exit()
 
 def meglepi(honnanx, honnany, hovax, hovay):
     """Meglépi a táblán a honnan mezőről a hova mezőre a lépést."""
@@ -452,7 +453,8 @@ def butan_lep(innen_lehetseges, ide_lehetseges):
 
 kijelolve = False
 lepett = False
-lepes = 0
+lepes = 1
+jatszma = ""
 
 while fut:
 
@@ -478,12 +480,14 @@ while fut:
                             idey = lista[1]
                             if (egerx == idex) and (egery == idey):
                                 # Itt lépünk:
-                                print lepesinfo(innenx,inneny,egerx,egery)
+                                info = lepesinfo(innenx,inneny,egerx,egery)
+                                jatszma += str(lepes) + ". " + info + " "
+                                print "Játszma:", jatszma
                                 meglepi(innenx,inneny,egerx,egery)
                                 kijelolve = False
                                 lepett = True
                                 kirajzol()
-                                lepes += 1
+                                # lepes += 1
                                 if lepes % 4 == -1:
                                     sotet_nyer()
                     if not lepett:
@@ -534,6 +538,9 @@ while fut:
         figurat_rajzol(egerx,egery,21)
         pygame.display.flip()
         time.sleep(0.5)
+        info = lepesinfo(innenx,inneny,egerx,egery)
+        jatszma += info + " "
+        print "Játszma:", jatszma
         meglepi(innenx,inneny,egerx,egery)
         kirajzol()
 
