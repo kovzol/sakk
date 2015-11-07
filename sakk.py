@@ -166,6 +166,9 @@ def ide_lephet(oszlop, sor):
             valasz.append(szamma(oszlop,sor+2))
     return valasz
 
+kijelolve = False
+lepett = False
+
 while fut:
 
     esemenyek = pygame.event.get()
@@ -186,19 +189,37 @@ while fut:
                 egery = 7 - ((egerhol[1] - yplusz) / negyzet)
                 print "Ez a", egerx, egery, "négyzet."
                 if (egerx >= 0) and (egerx <= 7) and (egery >=0) and (egery <= 7):
-                    figura = t[egerx][egery]
-                    if (figura >= 1) and (figura <= 6):
-                        kirajzol()
-                        figurat_rajzol(egerx, egery, 20)
-                        for lista in ide_lephet(egerx, egery):
+                    if kijelolve:
+                        for lista in lepesek:
                             ide = szambol(lista)
-                            print "Ide léphet:", ide
                             idex = ide[0]
                             idey = ide[1]
-                            figurat_rajzol(idex, idey, 21)
+                            if (egerx == idex) and (egery == idey):
+                                t[egerx][egery] = t[innenx][inneny]
+                                t[innenx][inneny] = 0
+                                kijelolve = False
+                                lepett = True
+                                kirajzol()
+                    if not lepett:
+                        figura = t[egerx][egery]
+                        if (figura >= 1) and (figura <= 6):
+                            kirajzol()
+                            figurat_rajzol(egerx, egery, 20)
+                            lepesek = ide_lephet(egerx, egery)
+                            for lista in lepesek:
+                                ide = szambol(lista)
+                                print "Ide léphet:", ide
+                                idex = ide[0]
+                                idey = ide[1]
+                                figurat_rajzol(idex, idey, 21)
+                                kijelolve = True
+                            innenx = egerx
+                            inneny = egery
                 
 
     pygame.display.flip()
+
+    lepett = False
 
     ora.tick(30)
 
