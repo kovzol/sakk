@@ -26,22 +26,16 @@ fig = [[None for i in range(3)] for j in range(6)]
 for j in range(1,3):
     fajlnev = 'K' + str(j) + '.png'
     fig[0][j-1] = pygame.image.load(fajlnev)
-    print "Betöltöttem a " + fajlnev + " fájlt."
     fajlnev = 'V' + str(j) + '.png'
     fig[1][j-1] = pygame.image.load(fajlnev)
-    print "Betöltöttem a " + fajlnev + " fájlt."
     fajlnev = 'B' + str(j) + '.png'
     fig[2][j-1] = pygame.image.load(fajlnev)
-    print "Betöltöttem a " + fajlnev + " fájlt."
     fajlnev = 'F' + str(j) + '.png'
     fig[3][j-1] = pygame.image.load(fajlnev)
-    print "Betöltöttem a " + fajlnev + " fájlt."
     fajlnev = 'H' + str(j) + '.png'
     fig[4][j-1] = pygame.image.load(fajlnev)
-    print "Betöltöttem a " + fajlnev + " fájlt."
     fajlnev = 'Gy' + str(j) + '.png'
     fig[5][j-1] = pygame.image.load(fajlnev)
-    print "Betöltöttem a " + fajlnev + " fájlt."
 
 kivalaszt = pygame.image.load("kivalaszt.png")
 cel = pygame.image.load("cel.png")
@@ -333,11 +327,9 @@ while fut:
         if e.type == pygame.MOUSEBUTTONDOWN:
             egergombok = pygame.mouse.get_pressed()
             if egergombok[0]:
-                print "Bal egérgomb lenyomva."
                 egerhol = pygame.mouse.get_pos()
                 egerx = (egerhol[0] - xplusz) / negyzet
                 egery = 7 - ((egerhol[1] - yplusz1) / negyzet)
-                print "Ez a", egerx, egery, "négyzet."
                 if (egerx >= 0) and (egerx <= 7) and (egery >=0) and (egery <= 7):
                     if kijelolve:
                         for lista in lepesek:
@@ -363,7 +355,6 @@ while fut:
                             figurat_rajzol(egerx, egery, 20)
                             lepesek = ide_lephet(egerx, egery)
                             for lista in lepesek:
-                                print "Ide léphet:", lista
                                 idex = lista[0]
                                 idey = lista[1]
                                 figurat_rajzol(idex, idey, 21)
@@ -397,7 +388,7 @@ while fut:
         t[egerx][egery] = t[innenx][inneny]
         t[innenx][inneny] = 0
         # Ha a gyalog belépett az utolsó sorba, akkor vezér lesz:
-        if t[egerx][egery] == 11 and egery == 0:
+        if t[egerx][egery] == 16 and egery == 0:
             t[egerx][egery] = 12
         kirajzol()
         lepes += 1
