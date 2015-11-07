@@ -173,7 +173,18 @@ def kirajzol():
             pygame.draw.rect(screen, mezoszin, (i*negyzet+xplusz,(7-j)*negyzet+yplusz1,negyzet,negyzet), 0)
             figurat_rajzol(i, j, t[i][j])
 
-kirajzol()
+    if pygame.font:
+        meret = 30
+        feher = (250, 250, 250)
+        font = pygame.font.Font(None, meret)
+        for i in range(8):
+            szoveg = font.render(str(i+1), 1, feher)
+            screen.blit(szoveg, (30, m-i*negyzet-80))
+        for i in range(8):
+            szoveg = font.render(str(chr(i+ord('a'))), 1, feher)
+            screen.blit(szoveg, (i*negyzet+xplusz+30,m-25))
+
+
 
 fut = True
 
@@ -183,6 +194,8 @@ ora = pygame.time.Clock()
 ora.tick()
 
 pygame.init()
+kirajzol()
+
 
 def ures(oszlop, sor):
     return t[oszlop][sor] == 0
@@ -405,7 +418,7 @@ def sotet_nyer():
     # http://www.clanb2k.com/cstrike12/sound/zombie_plague/survivor1.wav
     pygame.mixer.music.load("sotet_nyer.wav")
     pygame.mixer.music.play(0)
-    time.sleep(5)
+    time.sleep(8)
     pygame.quit()
     sys.exit()
 
