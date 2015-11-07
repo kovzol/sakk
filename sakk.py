@@ -444,10 +444,21 @@ while fut:
         # Itt lép:
         innenx = gep_innen[0]
         inneny = gep_innen[1]
+        figurat_rajzol(innenx,inneny,20)
+        pygame.display.flip()
+        time.sleep(0.5)
         egerx = gep_ide[0]
         egery = gep_ide[1]
+        figurat_rajzol(egerx,egery,21)
+        pygame.display.flip()
+        time.sleep(0.5)
         meglepi(innenx,inneny,egerx,egery)
         kirajzol()
+        # figurat_rajzol(innenx,inneny,20)
+        # figurat_rajzol(egerx,egery,21)
+        # pygame.display.flip()
+        # time.sleep(0.15)
+        # kirajzol()
 
         lepes += 1
 
