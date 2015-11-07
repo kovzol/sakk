@@ -9,8 +9,8 @@ import pygame
 import random
 import time
 import os
-import copy
 import sys
+import datetime
 
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 
@@ -399,28 +399,25 @@ def ide_lephet_de_nincs_sakkban(oszlop,sor):
     valasz = ide_lephet(oszlop,sor)
     # Megnézzük, hogy a lehetséges lépések között van-e olyan,
     # ami sakkba lépést jelentene.
-    tabla_mentes = copy.deepcopy(t) # megjegyezzük, hogy mi az állás
     torlendo = []
     for l in valasz:
-        global t
         info = lepesinfo(oszlop,sor,l[0],l[1])
         # print "Sakkba lépünk-e a",info,"lépéssel?"
-        meglepi(oszlop,sor,l[0],l[1]) # kipróbáljuk, mi lenne, ha ezt lépnénk
-        tabla_mentes2 = copy.deepcopy(t)
+        vissza = meglepi(oszlop,sor,l[0],l[1]) # kipróbáljuk, mi lenne, ha ezt lépnénk
         # Megnézzük, hogy erre a lépésre az ellenfél miket tud lépni
         for o in range(8):
             for s in range(8):
                 if ellenkezo(o,s,plusz):
                     for ellenfel_lepes in ide_lephet(o,s):
                         info = lepesinfo(o,s,ellenfel_lepes[0],ellenfel_lepes[1])
-                        meglepi(o,s,ellenfel_lepes[0],ellenfel_lepes[1])
+                        vissza2 = meglepi(o,s,ellenfel_lepes[0],ellenfel_lepes[1])
                         ertek_ez = tablaertek()
                         if ertek_ez < -500 or ertek_ez > 500: # valamelyik félnek le lehetne ütni a királyát
                             # print "Igen, mert az ellenfél",info,"lépésére a tábla értéke",ertek_ez
                             if not (l in torlendo):
                                 torlendo.append(l) # ez a lépés nem szabályos, töröljük
-                        t = copy.deepcopy(tabla_mentes2) # visszacsináljuk az ellenfél lépésést
-        t = copy.deepcopy(tabla_mentes) # visszacsináljuk a próbalépésünket
+                        visszacsinal(vissza2) # visszacsináljuk az ellenfél lépésést
+        visszacsinal(vissza) # visszacsináljuk a próbalépésünket
     for l in torlendo:
         valasz.remove(l)
     return valasz
@@ -472,8 +469,11 @@ def vilagos_nyer():
     sys.exit()
 
 def meglepi(honnanx, honnany, hovax, hovay):
-    """Meglépi a táblán a honnan mezőről a hova mezőre a lépést."""
+    """Meglépi a táblán a honnan mezőről a hova mezőre a lépést. Listában visszaadja a visszacsináláshoz szükséges lépéseket."""
+    v = []
+    v.append([hovax,hovay,t[hovax][hovay]]) # mi volt a cél helyen
     t[hovax][hovay] = t[honnanx][honnany]
+    v.append([honnanx,honnany,t[honnanx][honnany]]) # mi volt az indulás helyén
     t[honnanx][honnany] = 0
     # Ha a világos gyalog belépett az utolsó sorba, akkor vezér lesz:
     if t[hovax][hovay] == 6 and hovay == 7:
@@ -481,41 +481,43 @@ def meglepi(honnanx, honnany, hovax, hovay):
     # Ha a sötét gyalog belépett az utolsó sorba, akkor vezér lesz:
     if t[hovax][hovay] == 16 and hovay == 0:
         t[hovax][0] = 12
+    return v
 
 def also_fele_lep(innen_lehetseges, ide_lehetseges):
     return 0
-    # return int(szamuk/2)
+
+def kozep_fele_lep(innen_lehetseges, ide_lehetseges):
+    szamuk = len(ide_lehetseges)
+    return int(szamuk/2)
 
 def okosan_lep(innen_lehetseges, ide_lehetseges):
     szamuk = len(ide_lehetseges)
-    global t
-    tabla_mentes = copy.deepcopy(t) # megjegyezzük, hogy mi az állás
     legjobb_tablaertek = -2000 # ennél biztosan csak jobb lehet
     for l in range(szamuk):
-        t = copy.deepcopy(tabla_mentes)
         proba_innen = innen_lehetseges[l]
         proba_ide = ide_lehetseges[l]
-        meglepi(proba_innen[0], proba_innen[1], proba_ide[0], proba_ide[1])
+        vissza = meglepi(proba_innen[0], proba_innen[1], proba_ide[0], proba_ide[1])
         ertek_ez = tablaertek()
         if ertek_ez > legjobb_tablaertek:
             legjobb_lepes = l
             legjobb_tablaertek = ertek_ez
         if ertek_ez == legjobb_tablaertek and random.randint(1,6) <= 1:
             legjobb_lepes = l
-    t = copy.deepcopy(tabla_mentes)
+        visszacsinal(vissza)
     return legjobb_lepes
+
+def visszacsinal(vissza):
+    """Meglépi (visszacsinálja) a vissza listában leírt lépéseket."""
+    for i in vissza:
+        t[i[0]][i[1]] = i[2]
 
 def nagyon_okosan_lep(innen_lehetseges, ide_lehetseges):
     szamuk = len(ide_lehetseges)
-    global t
-    tabla_mentes = copy.deepcopy(t) # megjegyezzük, hogy mi az állás
     legjobb_tablaertek = -2000 # ennél csak jobb lehet (minimax)
     for l in range(szamuk):
-        t = copy.deepcopy(tabla_mentes)
         proba_innen = innen_lehetseges[l]
         proba_ide = ide_lehetseges[l]
-        meglepi(proba_innen[0], proba_innen[1], proba_ide[0], proba_ide[1]) # sötét tervezett saját lépése
-        tabla_mentes2 = copy.deepcopy(t)
+        vissza = meglepi(proba_innen[0], proba_innen[1], proba_ide[0], proba_ide[1]) # sötét tervezett saját lépése
         # Megnézzük, hogy milyen válaszlépéseket tud adni a világos:
         vilagos_legkellemetlenebb_valasza = 2000
         for i in range(8):
@@ -523,17 +525,17 @@ def nagyon_okosan_lep(innen_lehetseges, ide_lehetseges):
                 if vilagos(i,j):
                     ide = ide_lephet_de_nincs_sakkban(i,j)
                     for ide_lehet in ide:
-                        meglepi(i,j,ide_lehet[0],ide_lehet[1])
+                        vissza2 = meglepi(i,j,ide_lehet[0],ide_lehet[1])
                         ertek_ez = tablaertek()
                         if ertek_ez < vilagos_legkellemetlenebb_valasza:
                             vilagos_legkellemetlenebb_valasza = ertek_ez
-                        t = copy.deepcopy(tabla_mentes2)
+                        visszacsinal(vissza2)
         if vilagos_legkellemetlenebb_valasza > legjobb_tablaertek:
             legjobb_tablaertek = vilagos_legkellemetlenebb_valasza
             legjobb_lepes = l
         if vilagos_legkellemetlenebb_valasza == legjobb_tablaertek and random.randint(1,6) <= 1:
             legjobb_lepes = l
-    t = copy.deepcopy(tabla_mentes)
+        visszacsinal(vissza)
     return legjobb_lepes
 
 def butan_lep(innen_lehetseges, ide_lehetseges):
@@ -577,9 +579,6 @@ while fut:
                                 kijelolve = False
                                 lepett = True
                                 kirajzol()
-                                # lepes += 1
-                                if lepes % 4 == -1:
-                                    sotet_nyer()
                     if not lepett:
                         figura = t[egerx][egery]
                         if (figura >= 1) and (figura <= 6):
@@ -612,9 +611,12 @@ while fut:
         if szamuk == 0:
             vilagos_nyer()
 
+        kezdes = datetime.datetime.now()
         # ezt_lepi = butan_lep(innen_lehetseges, ide_lehetseges)
         # ezt_lepi = okosan_lep(innen_lehetseges, ide_lehetseges)
         ezt_lepi = nagyon_okosan_lep(innen_lehetseges, ide_lehetseges)
+        befejezes = datetime.datetime.now()
+        print "Gondolkodási idő:", (befejezes-kezdes)
 
         gep_ide = ide_lehetseges[ezt_lepi]
         gep_innen = innen_lehetseges[ezt_lepi]
@@ -653,6 +655,4 @@ while fut:
 
     lepett = False
 
-
     ora.tick(30)
-
