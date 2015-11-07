@@ -477,6 +477,35 @@ def okosan_lep(innen_lehetseges, ide_lehetseges):
     t = copy.deepcopy(tabla_mentes)
     return legjobb_lepes
 
+def nagyon_okosan_lep(innen_lehetseges, ide_lehetseges):
+    szamuk = len(ide_lehetseges)
+    global t
+    tabla_mentes = copy.deepcopy(t) # megjegyezzük, hogy mi az állás
+    legjobb_tablaertek = -2000 # ennél csak jobb lehet (minimax)
+    for l in range(szamuk):
+        t = copy.deepcopy(tabla_mentes)
+        proba_innen = innen_lehetseges[l]
+        proba_ide = ide_lehetseges[l]
+        meglepi(proba_innen[0], proba_innen[1], proba_ide[0], proba_ide[1]) # sötét tervezett saját lépése
+        tabla_mentes2 = copy.deepcopy(t)
+        # Megnézzük, hogy milyen válaszlépéseket tud adni a világos:
+        vilagos_legkellemetlenebb_valasza = 2000
+        for i in range(8):
+            for j in range(8):
+                if vilagos(i,j):
+                    ide = ide_lephet_de_nincs_sakkban(i,j)
+                    for ide_lehet in ide:
+                        meglepi(i,j,ide_lehet[0],ide_lehet[1])
+                        ertek_ez = tablaertek()
+                        if ertek_ez < vilagos_legkellemetlenebb_valasza:
+                            vilagos_legkellemetlenebb_valasza = ertek_ez
+                        t = copy.deepcopy(tabla_mentes2)
+        if vilagos_legkellemetlenebb_valasza > legjobb_tablaertek:
+            legjobb_tablaertek = vilagos_legkellemetlenebb_valasza
+            legjobb_lepes = l
+    t = copy.deepcopy(tabla_mentes)
+    return legjobb_lepes
+
 def butan_lep(innen_lehetseges, ide_lehetseges):
     szamuk = len(ide_lehetseges)
     veletlen = random.randint(0,szamuk-1)
@@ -553,8 +582,9 @@ while fut:
         if szamuk == 0:
             vilagos_nyer()
 
-        # ezt_lepi = butan_lep(innen_lehetseges, ide_lehetseges) 
-        ezt_lepi = okosan_lep(innen_lehetseges, ide_lehetseges) 
+        # ezt_lepi = butan_lep(innen_lehetseges, ide_lehetseges)
+        # ezt_lepi = okosan_lep(innen_lehetseges, ide_lehetseges)
+        ezt_lepi = nagyon_okosan_lep(innen_lehetseges, ide_lehetseges)
 
         gep_ide = ide_lehetseges[ezt_lepi]
         gep_innen = innen_lehetseges[ezt_lepi]
