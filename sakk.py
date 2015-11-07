@@ -9,6 +9,7 @@ import pygame
 import random
 import time
 import os
+import copy
 
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 
@@ -342,9 +343,28 @@ def meglepi(honnanx, honnany, hovax, hovay):
     if t[hovax][hovay] == 16 and hovay == 0:
         t[hovax][0] = 12
 
-def okosan_lep(innen_lehetseges, ide_lehetseges):
-    tabla_mentes = t # megjegyezzük, hogy mi az állás
+def also_fele_lep(innen_lehetseges, ide_lehetseges):
     return 0
+    # return int(szamuk/2)
+
+def okosan_lep(innen_lehetseges, ide_lehetseges):
+    szamuk = len(ide_lehetseges)
+    global t
+    tabla_mentes = copy.deepcopy(t) # megjegyezzük, hogy mi az állás
+    legjobb_tablaertek = -2000 # ennél biztosan csak jobb lehet
+    for l in range(szamuk):
+        t = copy.deepcopy(tabla_mentes)
+        proba_innen = innen_lehetseges[l]
+        proba_ide = ide_lehetseges[l]
+        meglepi(proba_innen[0], proba_innen[1], proba_ide[0], proba_ide[1])
+        ertek_ez = tablaertek()
+        if ertek_ez > legjobb_tablaertek:
+            legjobb_lepes = l
+            legjobb_tablaertek = ertek_ez
+        if ertek_ez == legjobb_tablaertek and random.randint(1,6) <= 3:
+            legjobb_lepes = l
+    t = copy.deepcopy(tabla_mentes)
+    return legjobb_lepes
 
 def butan_lep(innen_lehetseges, ide_lehetseges):
     szamuk = len(ide_lehetseges)
@@ -416,7 +436,8 @@ while fut:
         szamuk = len(ide_lehetseges)
         print "Sötét lehetséges lépései:", szamuk, "db"
 
-        ezt_lepi = butan_lep(innen_lehetseges, ide_lehetseges) 
+        # ezt_lepi = butan_lep(innen_lehetseges, ide_lehetseges) 
+        ezt_lepi = okosan_lep(innen_lehetseges, ide_lehetseges) 
 
         gep_ide = ide_lehetseges[ezt_lepi]
         gep_innen = innen_lehetseges[ezt_lepi]
