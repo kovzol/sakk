@@ -69,8 +69,6 @@ t[7][7] = 13
 t[6][7] = 15
 t[5][7] = 14
 
-#t[5][3] = 2
-
 for i in range(8):
     t[i][6] = 16
 
@@ -191,6 +189,7 @@ def tablaertek():
     return ertek
 
 def ide_lephet(oszlop, sor):
+    """Egy bizonyos helyről hová léphet valamelyik játékos. Esetleg sakkba is léphet."""
     valasz = []
     f = t[oszlop][sor]
     if vilagos(oszlop, sor):
@@ -326,6 +325,63 @@ def ide_lephet(oszlop, sor):
             valasz.append([oszlop,sor-1])
     return valasz
 
+def figuranev(f):
+    nevek = {
+        1: "K",
+        2: "V",
+        3: "B",
+        4: "F",
+        5: "H",
+        6: str("")
+        }
+    if f > 6:
+        f -= 10
+    return nevek.get(f,"?")
+
+def lepesinfo(x1,y1,x2,y2):
+    f = figuranev(t[x1][y1])
+    x = str("")
+    if t[x2][y2] > 0:
+        x = "x"
+    return f + x + str(chr(x2+ord('a'))) + str(y2+1)
+
+def ide_lephet_de_nincs_sakkban(oszlop,sor):
+    """Egy bizonyos helyről hová léphet valamelyik játékos. Sakkba nem léphet."""
+    f = t[oszlop][sor]
+    if vilagos(oszlop, sor):
+        plusz = 0
+    else:
+        plusz = 10
+
+    valasz = ide_lephet(oszlop,sor)
+    # Megnézzük, hogy a lehetséges lépések között van-e olyan,
+    # ami sakkba lépést jelentene.
+    tabla_mentes = copy.deepcopy(t) # megjegyezzük, hogy mi az állás
+    torlendo = []
+    for l in valasz:
+        global t
+        info = lepesinfo(oszlop,sor,l[0],l[1])
+        print "Sakkba lépünk-e a",info,"lépéssel?"
+        meglepi(oszlop,sor,l[0],l[1]) # kipróbáljuk, mi lenne, ha ezt lépnénk
+        tabla_mentes2 = copy.deepcopy(t)
+        # Megnézzük, hogy erre a lépésre az ellenfél miket tud lépni
+        for o in range(8):
+            for s in range(8):
+                if ellenkezo(o,s,plusz):
+                    for ellenfel_lepes in ide_lephet(o,s):
+                        info = lepesinfo(o,s,ellenfel_lepes[0],ellenfel_lepes[1])
+                        meglepi(o,s,ellenfel_lepes[0],ellenfel_lepes[1])
+                        ertek_ez = tablaertek()
+                        if ertek_ez < -500 or ertek_ez > 500: # valamelyik félnek le lehetne ütni a királyát
+                            print "Igen, mert az ellenfél",info,"lépésére a tábla értéke",ertek_ez
+                            if not (l in torlendo):
+                                torlendo.append(l) # ez a lépés nem szabályos, töröljük
+                        t = copy.deepcopy(tabla_mentes2) # visszacsináljuk az ellenfél lépésést
+        t = copy.deepcopy(tabla_mentes) # visszacsináljuk a próbalépésünket
+    for l in torlendo:
+        valasz.remove(l)
+    return valasz
+
 def sotet_nyer():
     pygame.mixer.music.fadeout(0)
     # http://www.clanb2k.com/cstrike12/sound/zombie_plague/survivor1.wav
@@ -399,6 +455,7 @@ while fut:
                             idey = lista[1]
                             if (egerx == idex) and (egery == idey):
                                 # Itt lépünk:
+                                print lepesinfo(innenx,inneny,egerx,egery)
                                 meglepi(innenx,inneny,egerx,egery)
                                 kijelolve = False
                                 lepett = True
@@ -411,7 +468,7 @@ while fut:
                         if (figura >= 1) and (figura <= 6):
                             kirajzol()
                             figurat_rajzol(egerx, egery, 20)
-                            lepesek = ide_lephet(egerx, egery)
+                            lepesek = ide_lephet_de_nincs_sakkban(egerx, egery)
                             for lista in lepesek:
                                 idex = lista[0]
                                 idey = lista[1]
@@ -428,7 +485,7 @@ while fut:
         for i in range(8):
             for j in range(8):
                 if sotet(i,j):
-                    ide = ide_lephet(i,j)
+                    ide = ide_lephet_de_nincs_sakkban(i,j)
                     for ide_lehet in ide:
                         ide_lehetseges.append(ide_lehet)
                         innen_lehetseges.append([i,j])
@@ -454,11 +511,6 @@ while fut:
         time.sleep(0.5)
         meglepi(innenx,inneny,egerx,egery)
         kirajzol()
-        # figurat_rajzol(innenx,inneny,20)
-        # figurat_rajzol(egerx,egery,21)
-        # pygame.display.flip()
-        # time.sleep(0.15)
-        # kirajzol()
 
         lepes += 1
 
