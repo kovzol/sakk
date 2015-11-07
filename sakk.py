@@ -358,7 +358,7 @@ while fut:
                                     sotet_nyer()
                     if not lepett:
                         figura = t[egerx][egery]
-                        if (figura >= 1) and (figura <= 6):
+                        if (figura >= 1):# and (figura <= 6):
                             kirajzol()
                             figurat_rajzol(egerx, egery, 20)
                             lepesek = ide_lephet(egerx, egery)
