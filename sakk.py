@@ -379,7 +379,7 @@ def ide_lephet_de_nincs_sakkban(oszlop,sor):
     for l in valasz:
         global t
         info = lepesinfo(oszlop,sor,l[0],l[1])
-        print "Sakkba lépünk-e a",info,"lépéssel?"
+        # print "Sakkba lépünk-e a",info,"lépéssel?"
         meglepi(oszlop,sor,l[0],l[1]) # kipróbáljuk, mi lenne, ha ezt lépnénk
         tabla_mentes2 = copy.deepcopy(t)
         # Megnézzük, hogy erre a lépésre az ellenfél miket tud lépni
@@ -391,7 +391,7 @@ def ide_lephet_de_nincs_sakkban(oszlop,sor):
                         meglepi(o,s,ellenfel_lepes[0],ellenfel_lepes[1])
                         ertek_ez = tablaertek()
                         if ertek_ez < -500 or ertek_ez > 500: # valamelyik félnek le lehetne ütni a királyát
-                            print "Igen, mert az ellenfél",info,"lépésére a tábla értéke",ertek_ez
+                            # print "Igen, mert az ellenfél",info,"lépésére a tábla értéke",ertek_ez
                             if not (l in torlendo):
                                 torlendo.append(l) # ez a lépés nem szabályos, töröljük
                         t = copy.deepcopy(tabla_mentes2) # visszacsináljuk az ellenfél lépésést
@@ -405,6 +405,9 @@ def sotet_nyer():
     # http://www.clanb2k.com/cstrike12/sound/zombie_plague/survivor1.wav
     pygame.mixer.music.load("sotet_nyer.wav")
     pygame.mixer.music.play(0)
+    time.sleep(5)
+    pygame.quit()
+    sys.exit()
 
 def vilagos_nyer():
 
@@ -502,6 +505,8 @@ def nagyon_okosan_lep(innen_lehetseges, ide_lehetseges):
                         t = copy.deepcopy(tabla_mentes2)
         if vilagos_legkellemetlenebb_valasza > legjobb_tablaertek:
             legjobb_tablaertek = vilagos_legkellemetlenebb_valasza
+            legjobb_lepes = l
+        if vilagos_legkellemetlenebb_valasza == legjobb_tablaertek and random.randint(1,6) <= 1:
             legjobb_lepes = l
     t = copy.deepcopy(tabla_mentes)
     return legjobb_lepes
@@ -604,6 +609,18 @@ while fut:
         print "Játszma:", jatszma
         meglepi(innenx,inneny,egerx,egery)
         kirajzol()
+
+        pygame.display.flip()
+
+        # Megnézzük, mattot kapott-e a világos:
+        matt = True
+        for i in range(8):
+            for j in range(8):
+                if vilagos(i,j):
+                    if ide_lephet_de_nincs_sakkban(i,j) <> []:
+                        matt = False
+        if matt:
+            sotet_nyer()
 
         lepes += 1
 
