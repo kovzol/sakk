@@ -71,7 +71,7 @@ t[7][7] = 13
 t[6][7] = 15
 t[5][7] = 14
 
-# t[5][3] = 15
+#t[5][3] = 2
 
 for i in range(8):
     t[i][6] = 16
@@ -157,13 +157,91 @@ def szambol(szam):
 def ures(oszlop, sor):
     return t[oszlop][sor] == 0
 
+def sotet(oszlop, sor):
+    return t[oszlop][sor] >= 10
+
+def vilagos(oszlop, sor):
+    ez = t[oszlop][sor]
+    return ez >= 1 and ez <= 6
+
 def ide_lephet(oszlop, sor):
     valasz = []
-    if t[oszlop][sor] == 6: # gyalog
+    f = t[oszlop][sor]
+    if f == 6: # gyalog
         if sor < 7 and ures(oszlop, sor + 1):
             valasz.append(szamma(oszlop,sor+1))
         if sor == 1 and ures(oszlop, sor + 1) and ures(oszlop, sor + 2):
             valasz.append(szamma(oszlop,sor+2))
+    if f == 2 or f == 3: # vezér vagy bástya
+        # jobbra meddig tud lépni:
+        ittx = oszlop
+        itty = sor
+        while ittx < 7 and ures(ittx+1, itty):
+            valasz.append(szamma(ittx+1,itty))
+            ittx += 1
+        if ittx < 7 and sotet(ittx+1, itty):
+            valasz.append(szamma(ittx+1,itty))
+        # balra meddig tud lépni:
+        ittx = oszlop
+        itty = sor
+        while ittx > 0 and ures(ittx-1, itty):
+            valasz.append(szamma(ittx-1,itty))
+            ittx -= 1
+        if ittx > 0 and sotet(ittx-1, itty):
+            valasz.append(szamma(ittx-1,itty))
+        # le meddig tud lépni:
+        ittx = oszlop
+        itty = sor
+        while itty > 0 and ures(ittx, itty-1):
+            valasz.append(szamma(ittx,itty-1))
+            itty -= 1
+        if itty > 0 and sotet(ittx, itty-1):
+            valasz.append(szamma(ittx,itty-1))
+        # fel meddig tud lépni:
+        ittx = oszlop
+        itty = sor
+        while itty < 7 and ures(ittx, itty+1):
+            valasz.append(szamma(ittx,itty+1))
+            itty += 1
+        if itty < 7 and sotet(ittx, itty+1):
+            valasz.append(szamma(ittx,itty+1))
+    if f == 2 or f == 4: # vezér vagy futó
+        # jobbra-fel meddig tud lépni:
+        ittx = oszlop
+        itty = sor
+        while ittx < 7 and itty < 7 and ures(ittx+1, itty+1):
+            valasz.append(szamma(ittx+1,itty+1))
+            ittx += 1
+            itty += 1
+        if ittx < 7 and itty < 7 and sotet(ittx+1, itty+1):
+            valasz.append(szamma(ittx+1,itty+1))
+        # balra-fel meddig tud lépni:
+        ittx = oszlop
+        itty = sor
+        while ittx > 0 and itty < 7 and ures(ittx-1, itty+1):
+            valasz.append(szamma(ittx-1,itty+1))
+            ittx -= 1
+            itty += 1
+        if ittx > 0 and itty < 7 and sotet(ittx-1, itty+1):
+            valasz.append(szamma(ittx-1,itty+1))
+        # balra-le meddig tud lépni:
+        ittx = oszlop
+        itty = sor
+        while ittx > 0 and itty > 0 and ures(ittx-1, itty-1):
+            valasz.append(szamma(ittx-1,itty-1))
+            ittx -= 1
+            itty -= 1
+        if ittx > 0 and itty > 0 and sotet(ittx-1, itty-1):
+            valasz.append(szamma(ittx-1,itty-1))
+        # jobbra-le meddig tud lépni:
+        ittx = oszlop
+        itty = sor
+        while itty > 0 and ittx < 7 and ures(ittx+1, itty-1):
+            valasz.append(szamma(ittx+1,itty-1))
+            ittx += 1
+            itty -= 1
+        if itty > 0 and ittx < 7 and sotet(ittx+1, itty-1):
+            valasz.append(szamma(ittx+1,itty-1))
     return valasz
 
 kijelolve = False
@@ -195,8 +273,12 @@ while fut:
                             idex = ide[0]
                             idey = ide[1]
                             if (egerx == idex) and (egery == idey):
+                                # Itt lépünk:
                                 t[egerx][egery] = t[innenx][inneny]
                                 t[innenx][inneny] = 0
+                                # Ha a gyalog belépett az utolsó sorba, akkor vezér lesz:
+                                if t[egerx][egery] == 6 and egery == 7:
+                                    t[egerx][egery] = 2
                                 kijelolve = False
                                 lepett = True
                                 kirajzol()
