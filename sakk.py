@@ -172,6 +172,13 @@ def ide_lephet(oszlop, sor):
             valasz.append(szamma(oszlop,sor+1))
         if sor == 1 and ures(oszlop, sor + 1) and ures(oszlop, sor + 2):
             valasz.append(szamma(oszlop,sor+2))
+        # jobbra ütés:
+        if sor < 7 and oszlop < 7 and sotet(oszlop+1,sor+1):
+            print "Jobbra ütés:", oszlop, sor
+            valasz.append(szamma(oszlop+1,sor+1))
+        # balra ütés:
+        if sor < 7 and oszlop > 0 and sotet(oszlop-1,sor+1):
+            valasz.append(szamma(oszlop-1,sor+1))
     if f == 2 or f == 3: # vezér vagy bástya
         # jobbra meddig tud lépni:
         ittx = oszlop
