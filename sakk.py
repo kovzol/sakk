@@ -265,6 +265,23 @@ def ide_lephet(oszlop, sor):
             valasz.append([oszlop-1,sor+2])
         if sor > 1 and oszlop > 0 and not vilagos(oszlop - 1, sor - 2):
             valasz.append([oszlop-1,sor-2])
+    if f == 1: # király
+        if sor < 7 and oszlop < 7 and not vilagos(oszlop + 1, sor + 1):
+            valasz.append([oszlop+1,sor+1])
+        if sor > 0 and oszlop < 7 and not vilagos(oszlop + 1, sor - 1):
+            valasz.append([oszlop+1,sor-1])
+        if sor < 7 and oszlop > 0 and not vilagos(oszlop - 1, sor + 1):
+            valasz.append([oszlop-1,sor+1])
+        if sor > 0 and oszlop > 0 and not vilagos(oszlop - 1, sor - 1):
+            valasz.append([oszlop-1,sor-1])
+        if oszlop < 7 and not vilagos(oszlop + 1, sor):
+            valasz.append([oszlop+1,sor])
+        if sor < 7 and not vilagos(oszlop, sor + 1):
+            valasz.append([oszlop,sor+1])
+        if oszlop > 0 and not vilagos(oszlop - 1, sor):
+            valasz.append([oszlop-1,sor])
+        if sor > 0 and not vilagos(oszlop, sor - 1):
+            valasz.append([oszlop,sor-1])
     return valasz
 
 def sotet_nyer():
@@ -312,7 +329,7 @@ while fut:
                                 lepett = True
                                 kirajzol()
                                 lepes += 1
-                                if lepes % 4 == 0:
+                                if lepes % 4 == -1:
                                     sotet_nyer()
                     if not lepett:
                         figura = t[egerx][egery]
