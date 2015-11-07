@@ -40,6 +40,10 @@ for j in range(1,3):
     fig[5][j-1] = pygame.image.load(fajlnev)
     print "Betöltöttem a " + fajlnev + " fájlt."
 
+kivalaszt = pygame.image.load("kivalaszt.png")
+cel = pygame.image.load("cel.png")
+# kivalaszt = cel
+
 t = [[0 for i in range(8)] for j in range(8)]
 
 # Világosak:
@@ -105,6 +109,10 @@ def figurat_rajzol(oszlop, sor, melyiket):
         f = fig[4][1]
     if melyiket == 16:
         f = fig[5][1]
+
+    if melyiket == 20:
+        f = kivalaszt
+
     if melyiket != 0:
         meretx = f.get_rect().w
         merety = f.get_rect().h
@@ -147,6 +155,19 @@ while fut:
             gombok = pygame.key.get_pressed()
             if gombok[K_ESCAPE]:
                 fut = False
+        if e.type == pygame.MOUSEBUTTONDOWN:
+            egergombok = pygame.mouse.get_pressed()
+            if egergombok[0]:
+                print "Bal egérgomb lenyomva."
+                egerhol = pygame.mouse.get_pos()
+                egerx = (egerhol[0] - xplusz) / negyzet
+                egery = 7 - ((egerhol[1] - yplusz) / negyzet)
+                print "Ez a", egerx, egery, "négyzet."
+                if (egerx >= 0) and (egerx <= 7) and (egery >=0) and (egery <= 7):
+                    figura = t[egerx][egery]
+                    if (figura >= 1) and (figura <= 6):
+                        figurat_rajzol(egerx, egery, 20)
+                
 
     pygame.display.flip()
 
