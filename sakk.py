@@ -358,7 +358,7 @@ while fut:
                                     sotet_nyer()
                     if not lepett:
                         figura = t[egerx][egery]
-                        if (figura >= 1):# and (figura <= 6):
+                        if (figura >= 1) and (figura <= 6):
                             kirajzol()
                             figurat_rajzol(egerx, egery, 20)
                             lepesek = ide_lephet(egerx, egery)
@@ -370,9 +370,37 @@ while fut:
                                 kijelolve = True
                             innenx = egerx
                             inneny = egery
-                
 
     pygame.display.flip()
+
+    if lepett: # most a gép lép
+        ide_lehetseges = []
+        innen_lehetseges = []
+        for i in range(8):
+            for j in range(8):
+                if sotet(i,j):
+                    ide = ide_lephet(i,j)
+                    for ide_lehet in ide:
+                        ide_lehetseges.append(ide_lehet)
+                        innen_lehetseges.append([i,j])
+
+        szamuk = len(ide_lehetseges)
+        print "Sötét lehetséges lépései:", szamuk, "db"
+        ezt_lepi = random.randint(0,szamuk-1)
+        gep_ide = ide_lehetseges[ezt_lepi]
+        gep_innen = innen_lehetseges[ezt_lepi]
+        # Itt lép:
+        innenx = gep_innen[0]
+        inneny = gep_innen[1]
+        egerx = gep_ide[0]
+        egery = gep_ide[1]
+        t[egerx][egery] = t[innenx][inneny]
+        t[innenx][inneny] = 0
+        # Ha a gyalog belépett az utolsó sorba, akkor vezér lesz:
+        if t[egerx][egery] == 11 and egery == 0:
+            t[egerx][egery] = 12
+        kirajzol()
+        lepes += 1
 
     lepett = False
 
