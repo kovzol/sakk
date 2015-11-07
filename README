@@ -1,0 +1,20 @@
+Sakk - A chess game against the computer
+----------------------------------------
+
+Play chess with the computer. You need Python/PyGame to run this program.
+
+The variables, function names and comments are currently written in Hungarian.
+
+Authors:
+
+  * Zoltán Kovács <zoltan@geogebra.org>
+  * Benedek Kovács <kovben2004@gmail.com>
+
+Tested by the authors and
+
+  * Domonkos Kovács <kovdom07@gmail.com>
+
+Credits:
+
+  * http://www.clanb2k.com/cstrike12/sound/zombie_plague/survivor1.wav
+  * https://www.youtube.com/user/LibraryDealer/about
