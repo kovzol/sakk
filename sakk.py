@@ -446,7 +446,7 @@ def vilagos_nyer():
         pygame.display.flip()
 
     pygame.mixer.quit()
-    film = pygame.movie.Movie('explosion.mpg')
+    film = pygame.movie.Movie('robbanas.mpg')
     robotx = robot.get_rect().w
     film_screen = pygame.Surface((robotx,robot.get_rect().h))
 

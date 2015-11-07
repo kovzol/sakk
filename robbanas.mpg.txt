@@ -1,7 +1,7 @@
 1. A https://www.youtube.com/watch?v=bhZs3ALdL7Y film letöltése a youtube-dl programmal Ubuntu alatt.
 
-2. A kapott fájl átnevezése explosion.mp4-re.
+2. A kapott fájl átnevezése robbanas.mp4-re.
 
 3. A következő parancssorral átskálázzuk a filmet:
 
-   $ ffmpeg -i explosion.mp4  -vcodec mpeg1video -acodec libmp3lame -vf "scale=348x357" -intra explosion.mpg
+   $ ffmpeg -i robbanas.mp4 -vcodec mpeg1video -acodec libmp3lame -vf "scale=348x357" -intra robbanas.mpg
