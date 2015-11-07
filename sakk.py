@@ -242,6 +242,23 @@ def ide_lephet(oszlop, sor):
             itty -= 1
         if itty > 0 and ittx < 7 and sotet(ittx+1, itty-1):
             valasz.append(szamma(ittx+1,itty-1))
+    if f == 5: # huszár
+        if sor < 7 and oszlop < 6 and not vilagos(oszlop + 2, sor + 1):
+            valasz.append(szamma(oszlop+2,sor+1))
+        if sor > 0 and oszlop < 6 and not vilagos(oszlop + 2, sor - 1):
+            valasz.append(szamma(oszlop+2,sor-1))
+        if sor < 6 and oszlop < 7 and not vilagos(oszlop + 1, sor + 2):
+            valasz.append(szamma(oszlop+1,sor+2))
+        if sor > 1 and oszlop < 7 and not vilagos(oszlop + 1, sor - 2):
+            valasz.append(szamma(oszlop+1,sor-2))
+        if sor < 7 and oszlop > 1 and not vilagos(oszlop - 2, sor + 1):
+            valasz.append(szamma(oszlop-2,sor+1))
+        if sor > 0 and oszlop > 1 and not vilagos(oszlop - 2, sor - 1):
+            valasz.append(szamma(oszlop-2,sor-1))
+        if sor < 6 and oszlop > 0 and not vilagos(oszlop - 1, sor + 2):
+            valasz.append(szamma(oszlop-1,sor+2))
+        if sor > 1 and oszlop > 0 and not vilagos(oszlop - 1, sor - 2):
+            valasz.append(szamma(oszlop-1,sor-2))
     return valasz
 
 kijelolve = False
