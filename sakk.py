@@ -71,6 +71,8 @@ t[7][7] = 13
 t[6][7] = 15
 t[5][7] = 14
 
+# t[5][3] = 15
+
 for i in range(8):
     t[i][6] = 16
 
@@ -112,6 +114,8 @@ def figurat_rajzol(oszlop, sor, melyiket):
 
     if melyiket == 20:
         f = kivalaszt
+    if melyiket == 21:
+        f = cel
 
     if melyiket != 0:
         meretx = f.get_rect().w
@@ -144,6 +148,24 @@ ora.tick()
 
 pygame.init()
 
+def szamma(oszlop, sor):
+    return oszlop * 8 + sor
+
+def szambol(szam):
+    return [int(szam / 8), szam % 8]
+
+def ures(oszlop, sor):
+    return t[oszlop][sor] == 0
+
+def ide_lephet(oszlop, sor):
+    valasz = []
+    if t[oszlop][sor] == 6: # gyalog
+        if sor < 7 and ures(oszlop, sor + 1):
+            valasz.append(szamma(oszlop,sor+1))
+        if sor == 1 and ures(oszlop, sor + 1) and ures(oszlop, sor + 2):
+            valasz.append(szamma(oszlop,sor+2))
+    return valasz
+
 while fut:
 
     esemenyek = pygame.event.get()
@@ -166,7 +188,14 @@ while fut:
                 if (egerx >= 0) and (egerx <= 7) and (egery >=0) and (egery <= 7):
                     figura = t[egerx][egery]
                     if (figura >= 1) and (figura <= 6):
+                        kirajzol()
                         figurat_rajzol(egerx, egery, 20)
+                        for lista in ide_lephet(egerx, egery):
+                            ide = szambol(lista)
+                            print "Ide léphet:", ide
+                            idex = ide[0]
+                            idey = ide[1]
+                            figurat_rajzol(idex, idey, 21)
                 
 
     pygame.display.flip()
